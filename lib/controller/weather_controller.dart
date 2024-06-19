@@ -1,0 +1,1 @@
+class WeatherController extends ChangeNotifier {}
