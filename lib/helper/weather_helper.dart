@@ -1,24 +1,27 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
-class WeatherApiHelper {
-  WeatherApiHelper._();
+import '../globals.dart';
 
-  static WeatherApiHelper apiHelper = WeatherApiHelper._();
+class WeatherApi {
+  WeatherApi._();
+  static WeatherApi instance = WeatherApi._();
 
-  String ApiLink =
-      "https://api.openweathermap.org/data/2.5/weather?lat=21.1702&lon=72.8311&appid=f9b533218a2b4bc46d75fab7e56e60c4";
+  Logger logger = Logger();
 
-  Future<List> weather() {
-    List times = [];
-    http.Response response = await http.get(
-      uri.parse(ApiLink),
-    );
+  List weatherList = [];
+
+  Future<List> getWeather() async {
+    String api =
+        "http://api.weatherapi.com/v1/current.json?key=65578899c53c48b999f121435240206&q=${Global.instance.city2}";
+    http.Response response = await http.get(Uri.parse(api));
     if (response.statusCode == 200) {
-      Map Data = jsonDecode(response.body);
-      List time = Data['weather'];
-      times = time.map((e) => Weather.fromJson(e)).toList();
+      Map data = jsonDecode(response.body)["location"];
+      Map data2 = jsonDecode(response.body)["current"];
+      weatherList.add(data);
+      weatherList.add(data2);
     }
-    return times;
+    return weatherList;
   }
 }
